@@ -1,0 +1,16 @@
+{
+  "name": "my-electron-app",
+  "version": "0.1.0",
+  "author": "EtMaXx",
+  "description": "EtMaXx Launcher",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "electron": "^11.2.0"
+  }
+}

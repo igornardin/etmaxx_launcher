@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>EtMaXx Launcher</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body class="body">
+    <button id="close_button">X</button>
+    <div id="diretorio_div">
+        <label for="diretorio" id="diretorio_label">Diretório do World of Warcraft:</label>
+        <input type="text" id="diretorio" disabled>   
+        <input type="file" id="selectedFile" webkitdirectory />
+    </div>
+    <button id="play">PLAY</button>
+</body>
+<script>
+    const {ipcRenderer} = require('electron');
+    const closeApp = document.getElementById('close_button');
+    closeApp.addEventListener('click', () => {
+        ipcRenderer.send('close_window')
+    });    
+    const playbutton = document.getElementById('play');
+    playbutton.addEventListener('click', () => {
+        ipcRenderer.send('play_wow')
+    });     
+</script>
+</html>
