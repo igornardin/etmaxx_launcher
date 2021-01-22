@@ -1,2 +1,2 @@
-# etmaxx_launcher
+# EtMaXx_launcher
 Launcher do Etmaxx
