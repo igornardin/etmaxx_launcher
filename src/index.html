@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>EtMaXx Launcher</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link href="E:\workspace\etmaxx_launcher\node_modules\@fortawesome\fontawesome-free\css/fontawesome.css" rel="stylesheet">
+    <link href="E:\workspace\etmaxx_launcher\node_modules\@fortawesome\fontawesome-free\css/brands.css" rel="stylesheet">
+    <link href="E:\workspace\etmaxx_launcher\node_modules\@fortawesome\fontawesome-free\css/solid.css" rel="stylesheet">
+</head>
+
+<body class="body">
+    <div class="body_left">
+        <button id="play" class="buttons">PLAY</button><button id="config" class="buttons"><i class="fas fa-cog"></i></button>
+    </div>
+    <div class="body_right">
+        <h1 id="titulo_news">NOTÍCIAS</h1>
+        <div class="slideshow-container">
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <div id="main_news"></div>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        </div>
+    </div>
+</body>
+<script src="index.js"></script>
+
+</html>

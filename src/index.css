@@ -1,0 +1,157 @@
+.body{
+    background-image: url('file:///assets/LK_background.jpeg');
+    background-repeat:no-repeat;
+}
+
+button:focus {outline:0;}
+
+.head{
+  width: 100%;
+  float: left;
+  top: 0px;
+}
+
+.body_left{
+  width: 25%;
+  float: left;
+}
+
+.body_right{
+  width: 60%;
+  float: right;
+  background-color: #000000af;
+  margin-right: 20px;
+  height: 400px;
+  border-radius: 5px;
+}
+
+#titulo_news{
+  color:#ffffff;
+	font-family:Garamond ;
+  font-size:20px;
+  text-align: center;
+}
+
+#play {
+	background-color:#1391b8;
+	border-radius:3px;
+	border:1px solid #1184a7;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Garamond ;
+	font-size:20px;
+	font-weight:bold;
+	padding:10px 40px;
+	text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f26;
+  position: absolute;
+  bottom: 40px;
+  left: 35px;
+}
+
+#play:hover {
+	background-color:#3c97b3;
+}
+#play:active {
+	position:absolute;
+}
+
+#config {
+	background-color:#1391b8;
+	border-radius:3px;
+	border:1px solid #1184a7;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Garamond ;
+	font-size:20px;
+	font-weight:bold;
+	padding:10px 10px;
+	text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f26;
+  position: absolute;
+  bottom: 40px;
+  left: 167px;
+}
+
+#config:hover {
+	background-color:#3c97b3;
+}
+#config:active {
+	position:absolute;
+}
+
+.div_news_main{
+  padding: 20px;
+}
+
+.image_news_main{
+  width: 70%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 250px;
+}
+
+/* Caption text */
+.caption_news_main {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+  font-family:Garamond ;
+	font-size:20px;
+  font-weight:bold;
+  position: relative;
+  bottom: 1px;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 28px;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}

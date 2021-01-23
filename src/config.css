@@ -1,0 +1,27 @@
+.body{
+  background-color: #02022bd5;
+}
+
+#diretorio_area{
+    display:block;
+    float:left;
+    position:absolute;
+    bottom:15px; 
+    padding: 10px 10px 10px 10px;
+}
+
+#diretorio_label{
+    color: white;
+}
+
+#close_button{
+  background-color:transparent;
+	color:#ffffff;
+	font-size:18px;
+  text-decoration:none;
+  display: block;
+  float: right;
+  margin-right: -6px;
+  margin-top: -6px;
+  border-width: 0ch;
+}

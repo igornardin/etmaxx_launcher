@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "author": "EtMaXx",
   "description": "EtMaXx Launcher",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron ."
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.2",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
