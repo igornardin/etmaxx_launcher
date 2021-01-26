@@ -1,16 +1,16 @@
- @font-face {
+@font-face {
   font-family: 'Avenir Book';
-  src: url('..\\assets\\fonts\\Avenir-Book.ttf');
+  src: url('assets/fonts/Avenir-Book.ttf');
 }
 
 @font-face {
   font-family: 'Avenir Medium';
-  src: url('..\\assets\\fonts\\Avenir-Medium.ttf');
+  src: url('assets/fonts/Avenir-Medium.ttf');
 }
 
 @font-face {
   font-family: 'Ringbearer';
-  src: url('..\\assets\\fonts\\ringbearer.ttf');
+  src: url('assets/fonts/ringbearer.ttf');
 }
 
 /* Frame Bar */
@@ -58,6 +58,7 @@
   font-size: 14px;
   font-family: 'Avenir Medium';
   letter-spacing: 0.5px;
+  color: white;
 }
 
 /* Windows frame button dock. */
@@ -101,8 +102,7 @@
 }
 
 /* Elements */
-.body{
-    background-image: url('file:///assets/images/LK_background.jpeg');
+#body_main{
     background-repeat:no-repeat;
     font-family: 'Avenir Book';
     color: white;
@@ -270,14 +270,17 @@ button:focus {outline:0;}
 
 /* Rotating image for the spinner. */
 #loadSpinnerImage {
-  width: 120px;
+  width: 30%;
   height: auto;
   z-index: 400;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  position: relative;
-  top: 70px;
+  position: absolute;
+  top: 30%;
+  bottom: 30%;
+  left: 30%;
+  right: 30%;
 }
 
 /* Rotating animation for the spinner. */
@@ -340,6 +343,7 @@ button:focus {outline:0;}
   position: absolute;
   bottom: 5px;
   right: 50px;
+  color: white;
 }
 .buttonRedes{
   text-decoration: none;
@@ -397,4 +401,296 @@ button:focus {outline:0;}
 }
 #facebookSVG:active {
   fill: #4267B2;
+}
+
+/* CONFIGURAÇÕES*/
+
+#configBack{
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  color: rgba(255, 0, 0, 0.611);
+}
+#buttonConfigBack{
+  border: 0px;
+  border-radius: 0px 3px 3px 0px;
+  font-size: 20px;
+  padding: 0px 5px;
+  cursor: pointer;
+  background: rgba(126, 126, 126, 0.57);
+  transition: 0.25s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+/* Main settings container. */
+#settingsContainer {
+  position: absolute;
+  height: 90%;
+  width: 90%;
+  display: flex;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.754);
+  left: 5%;
+  right: 5%;
+}
+
+/* Drop shadow displayed when content is scrolled out of view. */
+#settingsContainer:before {
+  content: '';
+  background: linear-gradient(rgba(0, 0, 0, 0.25), transparent);
+  width: 100%;
+  height: 5px;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+#settingsContainer[scrolled]:before {
+  opacity: 1;
+}
+
+/* Left hand side of the settings UI, for navigation. */
+#settingsContainerLeft {
+  padding-top: 4%;
+  height: 100%;
+  width: 25%;
+  box-sizing: border-box;
+}
+
+/* Settings navigation container. */
+#settingsNavContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation header styles. */
+#settingsNavHeader {
+  height: 15%;
+  display: flex;
+  justify-content: center;
+}
+#settingsNavHeaderText {
+  font-size: 20px;
+}
+
+/* Navigation items outer container. */
+#settingsNavItemsContainer {
+  height: 85%;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Navigation items content container. */
+#settingsNavItemsContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Navigation item shared styles. */
+.settingsNavItem {
+  background: none;
+  border: none;
+  text-align: left;
+  margin: 5px 0px;
+  padding: 0px 20px;
+  color: grey;
+  cursor: pointer;
+  outline: none;
+  transition: 0.25s ease;
+}
+.settingsNavItem:hover,
+.settingsNavItem:focus {
+  color: #c1c1c1;
+  text-shadow: 0px 0px 20px #c1c1c1;
+}
+.settingsNavItem[selected] {
+  cursor: default;
+  color: white;
+  text-shadow: none;
+}
+
+/* Div to add some space between nav items. */
+.settingsNavSpacer {
+  height: 25px;
+}
+
+/* Right hand side of the settings container, for tabs. */
+#settingsContainerRight {
+  height: 100%;
+  width: 75%;
+  box-sizing: border-box;
+}
+
+/* Settings tab shared styles. */
+.settingsTab {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+.settingsTab::-webkit-scrollbar {
+  width: 2px;
+}
+.settingsTab::-webkit-scrollbar-track {
+  display: none;
+}
+.settingsTab::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.50);
+}
+
+/* Add spacing to the top of each settings tab. */
+.settingsTab > *:first-child {
+  margin-top: 5%;
+}
+
+/* Add spacing to the bottom of each settings tab. */
+.settingsTab > *:last-child {
+  margin-bottom: 20%;
+}
+
+/* Tab header shared styles. */
+.settingsTabHeader {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.settingsTabHeaderText {
+  font-size: 20px;
+  font-family: 'Avenir Medium';
+}
+.settingsTabHeaderDesc {
+  font-size: 12px;
+}
+
+/* Remove spin button from number inputs. */
+#settingsContainer input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* Default styles for text/number inputs. */
+#settingsContainer input[type=number],
+#settingsContainer input[type=text] {
+  color: white;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  border: 1px solid rgba(126, 126, 126, 0.57);
+  font-family: 'Avenir Book';
+  transition: 0.25s ease;
+}
+#settingsContainer input[type=number]:focus,
+#settingsContainer input[type=text]:focus {
+  outline: none;
+  border-color: rgba(126, 126, 126, 0.87);
+}
+#settingsContainer input[type=number][error] {
+  border-color: rgb(255, 27, 12);
+  background: rgba(236, 0, 0, 0.25);
+  color: rgb(255, 27, 12);
+}
+
+/* File selectors */
+
+/* Main container for File selectors. */
+.settingsFileSelContainer {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.50);
+  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 75%;
+}
+
+/* File selector title. */
+.settingsFileSelTitle {
+  margin-bottom: 10px;
+}
+
+/* Wrapper container for the actionable elements. */
+.settingsFileSelActions {
+  display: flex;
+  width: 90%;
+}
+
+/* File selector icon settings. */
+.settingsFileSelIcon {
+  display: flex;
+  align-items: center;
+  background: rgba(126, 126, 126, 0.57);
+  border-radius: 3px 0px 0px 3px;
+  padding: 5px;
+  transition: 0.25s ease;
+}
+.settingsFileSelSVG {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+/* Disabled text field which stores the selected file path. */
+.settingsFileSelVal {
+  border-radius: 0px !important;
+  width: 100%;
+  padding: 5px 10px;
+  font-size: 12px;
+  height: 30px;
+}
+
+/* File selection button. */
+.settingsFileSelButton {
+  border: 0px;
+  border-radius: 0px 3px 3px 0px;
+  font-size: 12px;
+  padding: 0px 5px;
+  cursor: pointer;
+  background: rgba(126, 126, 126, 0.57);
+  transition: 0.25s ease;
+  white-space: nowrap;
+  outline: none;
+}
+.settingsFileSelButton:hover,
+.settingsFileSelButton:focus {
+  text-shadow: 0px 0px 20px white;
+}
+.settingsFileSelButton:active {
+  text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Description for the file selector. */
+.settingsFileSelDesc {
+  font-size: 10px;
+  margin: 20px 0px;
+  color: lightgrey;
+  width: 89%;
+}
+.settingsFileSelDesc strong {
+  font-family: 'Avenir Medium';
+}
+
+#settingsAboutTitle {
+  font-size: 23px;
+}
+
+/* Current version text. */
+#settingsAboutCurrentVersionLine {
+  font-size: 10px;
+  color: grey;
+  font-weight: bold;
+}
+
+#project{
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  font-size: 10px;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
 }

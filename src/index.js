@@ -1,10 +1,31 @@
 const { ipcRenderer } = require('electron');
 const http = require('https');
+const path = require('path');
 
+configBackground();
 insertNews();
+setConfigCurrent("settingsTabLauncher");
+
+ipcRenderer.invoke('get_version').then(function (results) {
+    document.getElementById("CurrentVersionValue").textContent = results;
+});
+
+ipcRenderer.invoke('patch_applied').then(function (results) {
+    document.getElementById("CurrentPatchValue").textContent = results;
+});
+
+ipcRenderer.invoke('return_directory').then(function (results) {
+    document.getElementById("wowDirectoryText").value = results;
+});
+
+document.getElementById('wowDirectory').addEventListener('click', () => {
+    ipcRenderer.invoke('Open_folder').then(function (results) {
+        document.getElementById("wowDirectoryText").value = results;
+    });
+});
 
 document.getElementById('config').addEventListener('click', () => {
-    ipcRenderer.send('config_window')
+    openConfig();
 });
 
 document.getElementById('play').addEventListener('click', () => {
@@ -18,6 +39,20 @@ document.getElementById('frameButton_minimize').addEventListener('click', () => 
 document.getElementById('frameButton_close').addEventListener('click', () => {
     ipcRenderer.send('close_main')
 })
+
+function configBackground(){
+    document.body.style.backgroundImage = 'url(assets/images/LK_background.jpeg)';
+}
+
+function openConfig(){
+    document.getElementById("body_main").setAttribute("style", "display: none");
+    document.getElementById("body_config").setAttribute("style", "display: block");
+}
+
+function openMain(){
+    document.getElementById("body_main").setAttribute("style", "display: block");
+    document.getElementById("body_config").setAttribute("style", "display: none");
+}
 
 function insertNews(){
     http.request(
@@ -33,6 +68,8 @@ function insertNews(){
             })
             res.on("end", () => {
                 createSlideNews(JSON.parse(data));
+                document.getElementById("newsLoading").setAttribute("style", "display: none");
+                openMain();
             })
         }
     )
@@ -68,6 +105,13 @@ function createSlideNews(json){
         element.appendChild(div_news);   
     }  
     document.getElementById("titulo_news").textContent = "Últimas notícias";
-    document.getElementById("newsLoading").setAttribute("style", "display: none");
-    document.getElementById("main_news").setAttribute("style", "display: block");
+}
+
+function setConfigCurrent(id){
+    var documents = document.getElementsByClassName("settingsTab");
+    for (let index = 0; index < documents.length; index++) {
+        const element = documents.item(index);
+        element.setAttribute("style", "display: none");
+    }
+    document.getElementById(id).setAttribute("style", "display: block");
 }

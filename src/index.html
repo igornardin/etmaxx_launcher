@@ -9,8 +9,7 @@
         <link href="E:\workspace\etmaxx_launcher\node_modules\@fortawesome\fontawesome-free\css/brands.css" rel="stylesheet">
         <link href="E:\workspace\etmaxx_launcher\node_modules\@fortawesome\fontawesome-free\css/solid.css" rel="stylesheet">
     </head>
-
-    <body class="body">
+    <body>
         <div id="frameBar">
             <div id="frameResizableTop" class="frameDragPadder"></div>
             <div id="frameMain">
@@ -29,17 +28,97 @@
                     </div>
                 </div>
                 <div class="frameResizableVert frameDragPadder"></div>
-            </div>
+            </div>  
         </div>
-        <button id="play" class="buttons">PLAY</button><button id="config" class="buttons"><i class="fas fa-cog"></i></button>         
-        <div class="news_right">
-            <h2 id="titulo_news">Buscando as notícias...</h2>
-            <div id="main_news" style="display: none;"></div>
-            <div id="newsLoading">
-                <img id="loadSpinnerImage" class="rotating" src="../assets/images/Logo.png">
+        <!-- Tela de loading -->
+        <div id="newsLoading">
+            <img id="loadSpinnerImage" class="rotating" src="../src/assets/images/Logo.png">
+        </div>  
+        <!-- Tela principal -->
+        <div id="body_main" style="display: none;">
+            <button id="play" class="buttons">PLAY</button><button id="config" class="buttons"><i class="fas fa-cog"></i></button>         
+            <div class="news_right">
+                <h2 id="titulo_news">Buscando as notícias...</h2>
+                <div id="main_news"></div>
             </div>
+            <iframe src="https://discordapp.com/widget?id=584471070380392469&theme=dark" allowtransparency="true" frameborder="0" class="discord"></iframe>
         </div>
-        <iframe src="https://discordapp.com/widget?id=584471070380392469&theme=dark" width="250" height="270" allowtransparency="true" frameborder="0" class="discord"></iframe>
+        <!-- Configurações -->
+        <div id="body_config" style="display: none;">
+            <div id="settingsContainer">
+                <div id="settingsContainerLeft">
+                    <button id="buttonConfigBack" onclick="openMain()"><i class="fa fa-arrow-left" aria-hidden="true" id="configBack"></i></button>
+                    <div id="settingsNavContainer">
+                        <div id="settingsNavHeader">
+                            <span id="settingsNavHeaderText">Configurações</span>
+                        </div>
+                        <div id="settingsNavItemsContainer">
+                            <div id="settingsNavItemsContent">
+                                <button class="settingsNavItem" onclick="setConfigCurrent('settingsTabLauncher')">Launcher</button>
+                                <button class="settingsNavItem" onclick="setConfigCurrent('settingsTabAbout')">Sobre</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="settingsContainerRight">
+                    <div id="settingsTabLauncher" class="settingsTab" style="display: none;">
+                        <div class="settingsTabHeader">
+                            <span class="settingsTabHeaderText">Configurações do Launcher</span>
+                            <span class="settingsTabHeaderDesc">Opções relacionadas ao bom funcionamento do launcher.</span>
+                        </div>
+                        <div class="settingsFileSelContainer">
+                            <div class="settingsFileSelContent">
+                                <div class="settingsFieldTitle" id="settingsDataDirTitle">Diretório do World of Warcraft</div>
+                                <div class="settingsFileSelActions">
+                                    <div class="settingsFileSelIcon">
+                                        <svg class="settingsFileSelSVG">
+                                            <g>
+                                                <path fill="gray"
+                                                    d="m10.044745,5c0,0.917174 -0.746246,1.667588 -1.667588,1.667588l-4.168971,0l-2.501382,0c-0.921009,0 -1.667588,0.750415 -1.667588,1.667588l0,6.670353l0,2.501382c0,0.917174 0.746604,1.667588 1.667588,1.667588l16.675882,0c0.921342,0 1.667588,-0.750415 1.667588,-1.667588l0,-2.501382l0,-8.337941c0,-0.917174 -0.746246,-1.667588 -1.667588,-1.667588l-8.337941,0z" />
+                                                <path fill="gray"
+                                                    d="m1.627815,1.6c-0.921009,0 -1.667588,0.746579 -1.667588,1.667588l0,4.168971l8.337941,0l0,0.833794l11.673118,0l0,-4.168971c0,-0.921009 -0.746246,-1.667588 -1.667588,-1.667588l-8.572237,0c-0.288493,-0.497692 -0.816284,-0.833794 -1.433292,-0.833794l-6.670353,0z" />
+                                                <path fill="lightgray"
+                                                    d="m10.025276,4c0,0.918984 -0.747719,1.670879 -1.670879,1.670879l-4.177198,0l-2.506319,0c-0.922827,0 -1.670879,0.751896 -1.670879,1.670879l0,6.683517l0,2.506319c0,0.918984 0.748078,1.670879 1.670879,1.670879l16.708794,0c0.923161,0 1.670879,-0.751896 1.670879,-1.670879l0,-2.506319l0,-8.354397c0,-0.918984 -0.747719,-1.670879 -1.670879,-1.670879l-8.354397,0z" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                    <input class="settingsFileSelVal" id="wowDirectoryText" type="text" value="null" disabled>
+                                    <button id="wowDirectory" class="settingsFileSelButton" dialogTitle="Select Data Directory"
+                                        dialogDirectory="true">Escolha a pasta</button>
+                                </div>
+                            </div>
+                            <div class="settingsFileSelDesc">Informar o diretório do seu jogo. Ele poderá ser modificado, para atender os requisitos do servidor.</div>
+                        </div>
+                    </div>
+                    <div id="settingsTabAbout" class="settingsTab" style="display: none;">
+                        <div class="settingsTabHeader">
+                            <span class="settingsTabHeaderText">Sobre</span>
+                            <span class="settingsTabHeaderDesc">Verifique as informações sobre o Launcher.</span>
+                        </div>
+                        <div id="settingsAboutCurrentContainer">
+                            <div id="settingsAboutCurrentContent">
+                                <div id="settingsAboutCurrentHeadline">
+                                    <span id="settingsAboutTitle">EtMaXx Launcher</span>
+                                </div>                    
+                                <div id="settingsAboutCurrentVersion">
+                                    <div id="settingsAboutCurrentVersionDetails">
+                                        <div id="settingsAboutCurrentVersionLine">
+                                            <span id="CurrentVersionText">Versão do Launcher</span>
+                                            <span id="CurrentVersionValue">0.0.0</span>
+                                            <br>
+                                            <span id="CurrentPatchText">Patch aplicado</span>
+                                            <span id="CurrentPatchValue">0000</span>
+                                            <br>
+                                            <span>Alguns elementos foram baseados no projeto de Daniel Scalzi chamado <button id="project" onclick="openUrl('https\://github.com/dscalzi/HeliosLauncher')">Helios Launcher</button>.</span>                                
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
         <div id="redesSociais">
             <span>Siga-nos nas redes sociais</span>
             <button class="buttonRedes" onclick="openUrl('https\://etmaxx.com.br')">
@@ -86,7 +165,8 @@
                     </g>
                 </svg>    
             </button>
-        </div>        
+        </div>       
     </body>
+
     <script src="index.js"></script>
 </html>

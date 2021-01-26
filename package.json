@@ -4,14 +4,25 @@
   "author": "EtMaXx",
   "description": "EtMaXx Launcher",
   "main": "src/main.js",
+  "license": "MIT",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "cilinux": "node build.js WINDOWS && node build.js LINUX",
+    "cidarwin": "node build.js MAC",
+    "dist": "cross-env ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true node build.js",
+    "dist:win": "npm run dist -- WINDOWS",
+    "dist:mac": "npm run dist -- MAC",
+    "dist:linux": "npm run dist -- LINUX",
+    "lint": "eslint --config .eslintrc.json ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
+    "cross-env": "^7.0.3",
+    "electron-log": "^4.3.1",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
-    "electron": "^11.2.0"
+    "electron": "^11.2.0",
+    "electron-builder": "^22.9.1"
   }
 }

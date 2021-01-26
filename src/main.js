@@ -5,10 +5,14 @@ const rimraf = require("rimraf");
 const { dialog } = require('electron');
 const Store = require('./store.js');
 var fs = require('fs');
+const log = require('electron-log');
+const path = require('path');
+
+log.transports.file.level = 'info';
+log.transports.file.fileName = 'log.log';
 
 var directory = '';
 let mainWindow;
-let configWindow;
 
 const store = new Store({
   configName: 'user-preferences',
@@ -23,7 +27,6 @@ function createWindow() {
     app.quit()
     return
   }
-
   directory = store.get('directory');
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -32,47 +35,20 @@ function createWindow() {
       nodeIntegration: true,
       additionalArguments: [directory]
     },
-    enableRemoteModule: true,
     resizable: false,
     fullscreenable: false,
-    icon: './assets/images/favicon.ico',
+    icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
     frame: false
   })
   mainWindow.removeMenu();
-
-  mainWindow.loadFile('src/index.html')
-}
-
-function createWindowConfig() {
-
-  configWindow = new BrowserWindow({
-    width: 800,
-    height: 500,
-    webPreferences: {
-      nodeIntegration: true,
-      additionalArguments: [directory]
-    },
-    enableRemoteModule: true,
-    resizable: false,
-    fullscreenable: false,
-    icon: './assets/images/favicon.ico',
-    parent: mainWindow,
-    modal: true,
-    frame: false
-  })
-  configWindow.removeMenu();
-
-  configWindow.loadFile('src/config.html')
+  
+  mainWindow.loadFile('src/index.html');
 }
 
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
   app.quit()
-})
-
-ipcMain.on('config_window', (evt, arg) => {
-  createWindowConfig()
 })
 
 app.on('activate', () => {
@@ -87,10 +63,6 @@ ipcMain.on('close_main', (evt, arg) => {
 
 ipcMain.on('minimize_main', (evt, arg) => {
   mainWindow.minimize()
-})
-
-ipcMain.on('close_config', (evt, arg) => {
-  configWindow.close()
 })
 
 ipcMain.on('play_wow', (evt, arg) => {
