@@ -7,9 +7,13 @@ const Store = require('./store.js');
 var fs = require('fs');
 const log = require('electron-log');
 const path = require('path');
+const {autoUpdater} = require("electron-updater");
 
 log.transports.file.level = 'info';
 log.transports.file.fileName = 'log.log';
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 var directory = '';
 let mainWindow;
@@ -45,7 +49,10 @@ function createWindow() {
   mainWindow.loadFile('src/index.html');
 }
 
-app.whenReady().then(createWindow)
+app.on('ready', function()  {
+  createWindow();
+  autoUpdater.checkForUpdatesAndNotify();
+});
 
 app.on('window-all-closed', () => {
   app.quit()
