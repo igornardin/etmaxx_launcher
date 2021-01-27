@@ -51,8 +51,13 @@ function createWindow() {
 
 app.on('ready', function()  {
   createWindow();
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 });
+
+autoUpdater.on('update-downloaded', (info) => {
+  log.info("Vou atualizar!");
+  autoUpdater.quitAndInstall();  
+})
 
 app.on('window-all-closed', () => {
   app.quit()
