@@ -4,6 +4,7 @@ const path = require('path');
 
 configBackground();
 insertNews();
+searchPatches();
 setConfigCurrent("settingsTabLauncher");
 
 ipcRenderer.invoke('get_version').then(function (results) {
@@ -29,15 +30,22 @@ document.getElementById('config').addEventListener('click', () => {
 });
 
 document.getElementById('play').addEventListener('click', () => {
-    ipcRenderer.send('play_wow')
+    ipcRenderer.send('play_wow');
+});
+
+document.getElementById('buttonPatch').addEventListener('click', () => {
+    ipcRenderer.invoke('apply_patch').then(function (results) {
+        if(results)
+            document.getElementById("buttonPatch").setAttribute("style", "display: none");
+    });
 });
 
 document.getElementById('frameButton_minimize').addEventListener('click', () => {
-    ipcRenderer.send('minimize_main')
+    ipcRenderer.send('minimize_main');
 })
 
 document.getElementById('frameButton_close').addEventListener('click', () => {
-    ipcRenderer.send('close_main')
+    ipcRenderer.send('close_main');
 })
 
 function configBackground(){
@@ -70,6 +78,28 @@ function insertNews(){
                 createSlideNews(JSON.parse(data));
                 document.getElementById("newsLoading").setAttribute("style", "display: none");
                 openMain();
+            })
+        }
+    )
+    .end()
+}
+
+function searchPatches(){
+    http.request(
+        {
+            hostname: "etmaxx.com.br",
+            path: "/assets/launcher/patch.json"
+        },
+        res => {
+            let data = ""
+            res.on("data", d => {
+                data += d;
+            })
+            res.on("end", () => {
+                ipcRenderer.invoke('process_patch', data).then(function (result) {
+                    if(result)
+                        document.getElementById("buttonPatch").setAttribute("style", "display: block");
+                });
             })
         }
     )

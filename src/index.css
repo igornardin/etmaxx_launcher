@@ -129,7 +129,7 @@ button:focus {outline:0;}
 	text-decoration:none;
   text-shadow:0px 1px 0px #1f1f26;
   position: absolute;
-  bottom: 40px;
+  bottom: 60px;
   left: 40px;
 }
 
@@ -153,8 +153,8 @@ button:focus {outline:0;}
 	text-decoration:none;
   text-shadow:0px 1px 0px #1f1f26;
   position: absolute;
-  bottom: 40px;
-  left: 197px;
+  bottom: 60px;
+  left: 209px;
 }
 
 #config:hover {
@@ -162,6 +162,23 @@ button:focus {outline:0;}
 }
 #config:active {
 	position:absolute;
+}
+
+#buttonPatch {
+	background-color:#e21717;
+	border-radius:3px;
+	border:1px solid #7b0000;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:'Avenir Medium';
+	font-size:12px;
+	font-weight:bold;
+	padding:10px 10px;
+	text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f26;
+  position: absolute;
+  bottom: 15px;
+  left: 40px;
 }
 
 .news_right{

@@ -5,7 +5,7 @@ builder.build({
     targets: Platform.WINDOWS.createTarget(),
     config: {
         appId: 'etmaxxlauncher',
-        productName: 'EtMaXx Launcher',
+        productName: 'EtMaXx_Launcher',
         artifactName: '${productName}-setup-${version}.${ext}',
         copyright: 'Copyright © 2021 EtMaXx FunServer. Todos os direitos reservados',
         directories: {
