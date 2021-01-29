@@ -96,22 +96,32 @@ ipcMain.on('play_wow', (evt, arg) => {
   if (!installValid(directory)) {
     return;
   }
+  if(!shouldApplyPatch()){
+    return;
+  }
+  rimraf.sync(path.join(directory.toString(), 'cache'));
+  write_realmlist();
+  exec('"' + path.join(directory.toString(), 'Wow.exe') + '"');
+})
+
+function shouldApplyPatch(){
+  if(store.get('patch') === lastPatchToApply || !lastPatchToApply){
+    return true;
+  }
   let options = {
     title: "Atenção!",
     message: "Existem patchs para aplicar no World of Warcraft! Deseja fazer agora?",
     type: "question",
     buttons: ["Não", "Sim"]
   };
-  if (dialog.showMessageBoxSync(options) === 1)
-    if (!applyPatch())
-      return;
-  path.join(directory.toString(), 'cache');
-  write_realmlist();
-  exec(path.join(directory.toString(), 'Wow.exe'));
-})
+  if (dialog.showMessageBoxSync(options) != 1){
+    return true;
+  }
+  return applyPatch();  
+}
 
 function write_realmlist() {
-  var filepath = path.join(directory.toString(), 'data', 'enus', 'realmlist.wtf')
+  var filepath = path.join(directory.toString(), 'data', 'enus', 'realmlist.wtf');
   var content = "set realmlist etmaxx.zapto.org\nset patchlist 127.0.0.1";
 
   fs.writeFile(filepath, content, (err) => {
@@ -127,7 +137,7 @@ ipcMain.handle('Open_folder', (evt, arg) => {
   directory = dialog.showOpenDialogSync({
     properties: ['openDirectory']
   })
-  store.set('directory', directory);
+  store.set('directory', directory.toString());
   return directory;
 })
 
@@ -197,10 +207,10 @@ function applyPatch() {
 
 async function downloadFiles(progressBar){
   for (let index = 0; index < filesDownload.length; index++) {
-    downloadFile(filesDownload[index]).then((result) => {
+    log.info(await downloadFile(filesDownload[index]).then((result) => {
       progressBar.value += 1;
       unzipFile(result, filesDestination[index], progressBar);
-    });
+    }));
   }
 }
 
@@ -237,10 +247,6 @@ async function downloadFile(fileDownload) {
 function installValid(directoryValid) {
   if (directoryValid === '') {
     dialog.showErrorBox("Erro!", "Selecione um diretório antes de iniciar o jogo!");
-    return false;
-  }
-  if (!fs.existsSync(path.join(directoryValid.toString()))) {
-    dialog.showErrorBox("Erro!", "Diretório do World of Warcraft não existe!");
     return false;
   }
   if (!fs.existsSync(path.join(directoryValid.toString(), 'data'))) {
