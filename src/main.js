@@ -7,9 +7,9 @@ const Store = require('./store.js');
 var fs = require('fs');
 const log = require('electron-log');
 const path = require('path');
+const DecompressZip = require('decompress-zip');
 const { autoUpdater } = require("electron-updater");
 const { download } = require('electron-dl');
-const zip = require('7zip-min');
 const ProgressBar = require('electron-progressbar');
 
 log.transports.file.level = 'info';
@@ -174,7 +174,7 @@ function applyPatch() {
     text: 'Atualizando o cliente...',
     indeterminate: false,
     detail: 'Espere...',
-    maxValue: filesDownload.length,
+    maxValue: filesDownload.length * 2,
     browserWindow: {
       parent: mainWindow,
       icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
@@ -197,20 +197,33 @@ function applyPatch() {
 
 async function downloadFiles(progressBar){
   for (let index = 0; index < filesDownload.length; index++) {
-    downloadFile(filesDownload[index]).then(await function (result) {
-      console.log(result.getSavePath())
-      zip.unpack(result.getSavePath(), path.join(directory.toString(), filesDestination[index]), err => {
-        if (err) {
-          log.info(err);
-          log.info(result.getSavePath());
-          log.info(path.join(directory.toString(), filesDestination[index]));
-          dialog.showErrorBox("Erro na aplicação do patch", "Não foi possível aplicar o patch no client do World of Warcraft. Tente novamente mais tarde!");
-          store.set('patch', patchbefore);
-        }
-      });
+    downloadFile(filesDownload[index]).then((result) => {
+      progressBar.value += 1;
+      unzipFile(result, filesDestination[index], progressBar);
     });
-    progressBar.value += 1;
   }
+}
+
+async function unzipFile(result, destination, progressBar){
+  var unzipper = new DecompressZip(result.getSavePath());
+  unzipper.on('error', function (err) {
+      log.info(err);
+      log.info(result.getSavePath());
+      log.info(path.join(directory.toString(), destination));
+      dialog.showErrorBox("Erro na aplicação do patch", "Não foi possível aplicar o patch no client do World of Warcraft. Tente novamente mais tarde!");
+      store.set('patch', patchbefore);
+      progressBar.close();
+  });
+  unzipper.on('extract', function (log) {
+    console.log('Finished extracting');
+    progressBar.value += 1;
+  });
+  unzipper.extract({
+    path: path.join(directory.toString(), destination),
+    filter: function (file) {
+        return file.type !== "SymbolicLink";
+    }
+  });
 }
 
 async function downloadFile(fileDownload) {
