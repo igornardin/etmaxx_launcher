@@ -21,6 +21,7 @@ log.info('App starting...');
 var directory = '';
 let mainWindow;
 let patchsToApply;
+let patchbefore;
 let lastPatchToApply;
 
 /* Arquivos pra baixar e o equivalente destino */
@@ -41,6 +42,7 @@ function createWindow() {
     return
   }
   directory = store.get('directory');
+  patchbefore = store.get('patch');
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 628,
@@ -163,7 +165,7 @@ ipcMain.handle('apply_patch', () => {
   return applyPatch();
 })
 
-function applyPatch(){
+function applyPatch() {
   if (!installValid(directory)) {
     return false;
   }
@@ -173,51 +175,50 @@ function applyPatch(){
     indeterminate: false,
     detail: 'Espere...',
     maxValue: filesDownload.length,
-    browserWindow:{
+    browserWindow: {
       parent: mainWindow,
       icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
     }
   });
   progressBar
-  .on('completed', function() {
-    progressBar.detail = 'Atualização finalizada. Saindo...';
-  })
-  .on('aborted', function() {
-    console.info(`A atualização foi abortada...`);
-  })
-  .on('progress', function(value) {
-    progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
+    .on('completed', function () {
+      progressBar.detail = 'Atualização finalizada. Saindo...';
+    })
+    .on('aborted', function () {
+      console.info(`A atualização foi abortada...`);
+    })
+    .on('progress', function (value) {
+      progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
   });
-  let error = false;
+  downloadFiles(progressBar);
+  store.set('patch', lastPatchToApply);
+  return true;
+}
+
+async function downloadFiles(progressBar){
   for (let index = 0; index < filesDownload.length; index++) {
-    if (!downloadFiles(filesDownload[index], filesDestination[index])){
-      error = true;
-    }
-    progressBar.value+=1;
-  }
-  if (error){
-    dialog.showErrorBox("Erro na aplicação do patch", "Não foi possível aplicar o patch no client do World of Warcraft. Tente novamente mais tarde!");
-    return false;
-  }else{
-    store.set('patch', lastPatchToApply);
-    return true;
+    downloadFile(filesDownload[index]).then(await function (result) {
+      console.log(result.getSavePath())
+      zip.unpack(result.getSavePath(), path.join(directory.toString(), filesDestination[index]), err => {
+        if (err) {
+          log.info(err);
+          log.info(result.getSavePath());
+          log.info(path.join(directory.toString(), filesDestination[index]));
+          dialog.showErrorBox("Erro na aplicação do patch", "Não foi possível aplicar o patch no client do World of Warcraft. Tente novamente mais tarde!");
+          store.set('patch', patchbefore);
+        }
+      });
+    });
+    progressBar.value += 1;
   }
 }
 
-async function downloadFiles(fileDownload, fileDestination) {
-  let error = false;
-  await download(mainWindow, fileDownload, {
+async function downloadFile(fileDownload) {
+  return await download(mainWindow, fileDownload, {
     directory: path.join(directory.toString(), 'downloads'),
     saveAs: false,
     showBadge: false,
-  }).then(function (result) {
-    zip.unpack(result.getSavePath(), path.join(directory.toString(), fileDestination), err => { 
-      console.log(err); 
-      if(err) 
-        error = true;
-    });
   });
-  return error;
 }
 
 function installValid(directoryValid) {

@@ -17,8 +17,15 @@ builder.build({
                 {
                     target: 'nsis',
                     arch: 'x64'
+                },
+                {
+                    target: 'portable',
+                    arch: 'x64'
                 }
             ]
+        },
+        portable: {
+            artifactName: "etmaxx_portable.exe"
         },
         nsis: {
             oneClick: false,
