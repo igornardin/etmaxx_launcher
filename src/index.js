@@ -2,7 +2,6 @@ const { ipcRenderer } = require('electron');
 const http = require('https');
 const path = require('path');
 
-configBackground();
 insertNews();
 searchPatches();
 setConfigCurrent("settingsTabLauncher");
@@ -47,10 +46,6 @@ document.getElementById('frameButton_minimize').addEventListener('click', () => 
 document.getElementById('frameButton_close').addEventListener('click', () => {
     ipcRenderer.send('close_main');
 })
-
-function configBackground(){
-    document.body.style.backgroundImage = 'url(assets/images/LK_background.jpeg)';
-}
 
 function openConfig(){
     document.getElementById("body_main").setAttribute("style", "display: none");
@@ -112,29 +107,54 @@ function openUrl(url){
 
 function createSlideNews(json){
     var array = json["news"];
-    for(var i = 0; i < 4; i++) {
+    var obj = array[0];
+    //Cria div principal
+    var div_news = document.createElement("button");
+    div_news.setAttribute("class", "div_news_main fade");
+    div_news.setAttribute("onclick", "openUrl('https://etmaxx.com.br/en/news/" + obj.id + "')");
+    //Cria imagem
+    var image_news = document.createElement("img");
+    image_news.setAttribute("src", obj.image);
+    image_news.setAttribute("class", "image_news_main");
+    div_news.appendChild(image_news);
+    //Cria caption
+    var div_caption = document.createElement("div");
+    div_caption.setAttribute("class", "div_caption_news_main");
+    //Cria texto do caption
+    var div_caption_title = document.createElement("span");
+    div_caption_title.setAttribute("class", "caption_news_main");
+    div_caption_title.textContent = obj.title;
+    div_caption.appendChild(div_caption_title);
+    div_news.appendChild(div_caption);
+    div_news.appendChild(document.createElement("br"));        
+    var element = document.getElementById("main_news");
+    element.appendChild(div_news);   
+
+
+     for(var i = 1; i < 4; i++) {
         var obj = array[i];
         //Cria div principal
         var div_news = document.createElement("button");
-        div_news.setAttribute("class", "div_news_main fade");
+        div_news.setAttribute("class", "div_news_bottom fade");
         div_news.setAttribute("onclick", "openUrl('https://etmaxx.com.br/en/news/" + obj.id + "')");
         //Cria imagem
         var image_news = document.createElement("img");
         image_news.setAttribute("src", obj.image);
-        image_news.setAttribute("class", "image_news_main");
+        image_news.setAttribute("class", "image_news_bottom");
         div_news.appendChild(image_news);
         //Cria caption
         var div_caption = document.createElement("div");
-        div_caption.setAttribute("class", "caption_news_main");
+        div_caption.setAttribute("class", "div_caption_news_bottom");
         //Cria texto do caption
-        var div_caption_title = document.createTextNode(obj.title);
+        var div_caption_title = document.createElement("span");
+        div_caption_title.setAttribute("class", "caption_news_bottom");
+        div_caption_title.textContent = obj.title;
         div_caption.appendChild(div_caption_title);
         div_news.appendChild(div_caption);
         div_news.appendChild(document.createElement("br"));        
-        var element = document.getElementById("main_news");
+        var element = document.getElementById("other_news");
         element.appendChild(div_news);   
     }  
-    document.getElementById("titulo_news").textContent = "Últimas notícias";
 }
 
 function setConfigCurrent(id){
