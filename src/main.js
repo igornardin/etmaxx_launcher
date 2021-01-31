@@ -183,6 +183,41 @@ ipcMain.handle('process_patch', (evt, arg) => {
   return hasPatch;
 })
 
+ipcMain.handle('verify_addon', (evt, addon) => {
+  return fs.existsSync(path.join(directory.toString(), 'interface', 'addons', addon))
+});
+
+ipcMain.on('download_addon', (evt, url) => {
+  var progressBar = new ProgressBar({
+    text: 'Baixando o addon...',
+    indeterminate: false,
+    detail: 'Espere...',
+    maxValue: 2,
+    browserWindow: {
+      parent: mainWindow,
+      icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
+    }
+  });
+  progressBar
+    .on('completed', function () {
+      progressBar.detail = 'Atualização finalizada. Saindo...';
+    })
+    .on('aborted', function () {
+      console.info(`A atualização foi abortada...`);
+    })
+    .on('progress', function (value) {
+      progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
+  });  
+  downloadFile(url).then((result) => {
+    progressBar.value += 1;
+    unzipFile(result, path.join(directory.toString(), 'interface', 'addons'), progressBar);
+  });
+});
+
+ipcMain.on('remove_addon', (evt, addon) => {
+  rimraf.sync(path.join(directory.toString(), 'interface', 'addons', addon));
+});
+
 ipcMain.handle('apply_patch', () => {
   return applyPatch();
 })
@@ -221,7 +256,7 @@ async function downloadFiles(progressBar){
   for (let index = 0; index < filesDownload.length; index++) {
     log.info(await downloadFile(filesDownload[index]).then((result) => {
       progressBar.value += 1;
-      unzipFile(result, filesDestination[index], progressBar);
+      unzipFile(result, path.join(directory.toString(), filesDestination[index]), progressBar);
     }));
   }
 }
@@ -231,7 +266,7 @@ async function unzipFile(result, destination, progressBar){
   unzipper.on('error', function (err) {
       log.info(err);
       log.info(result.getSavePath());
-      log.info(path.join(directory.toString(), destination));
+      log.info(destination);
       dialog.showErrorBox("Erro na aplicação do patch", "Não foi possível aplicar o patch no client do World of Warcraft. Tente novamente mais tarde!");
       store.set('patch', patchbefore);
       progressBar.close();
@@ -241,7 +276,7 @@ async function unzipFile(result, destination, progressBar){
     progressBar.value += 1;
   });
   unzipper.extract({
-    path: path.join(directory.toString(), destination),
+    path: destination,
     filter: function (file) {
         return file.type !== "SymbolicLink";
     }

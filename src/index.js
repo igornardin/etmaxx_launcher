@@ -4,6 +4,7 @@ const path = require('path');
 
 insertNews();
 searchPatches();
+searchAddons();
 setConfigCurrent("settingsTabLauncher");
 
 ipcRenderer.invoke('get_version').then(function (results) {
@@ -109,6 +110,25 @@ function searchPatches(){
     .end()
 }
 
+function searchAddons(){
+    http.request(
+        {
+            hostname: "etmaxx.com.br",
+            path: "/assets/launcher/addons.json"
+        },
+        res => {
+            let data = ""
+            res.on("data", d => {
+                data += d;
+            })
+            res.on("end", () => {
+                createAddonsTab(data);
+            })
+        }
+    )
+    .end()
+}
+
 function openUrl(url){
     ipcRenderer.send('open_url', url)
 }
@@ -168,4 +188,48 @@ function setConfigCurrent(id){
         element.setAttribute("style", "display: none");
     }
     document.getElementById(id).setAttribute("style", "display: block");
+}
+
+function createAddonsTab(json){
+    var array = JSON.parse(json)["addons"];
+    for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        var settingsFieldContainer = document.createElement("div");
+        settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
+        var settingsFieldTitle = document.createElement("span");
+        settingsFieldTitle.setAttribute("class", "settingsFieldTitle");
+        settingsFieldTitle.innerHTML = element["addon"];
+        settingsFieldContainer.appendChild(settingsFieldTitle);
+        var settingsFieldDesc = document.createElement("span");
+        settingsFieldDesc.setAttribute("class", "settingsFieldDesc");
+        settingsFieldDesc.innerHTML = element["description"];
+        settingsFieldContainer.appendChild(settingsFieldDesc);
+        var settingsFieldRight = document.createElement("div");
+        settingsFieldRight.setAttribute("class", "settingsFieldRight");
+        var switchField = document.createElement("label");
+        switchField.setAttribute("class", "switch");
+        var checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.setAttribute("id", "input_" + element["addon"]);
+        ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
+            if(results)
+                document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+        });
+        checkbox.setAttribute("onclick", "changeAddon('" + element["addon"] + "', '" + element["file"] + "', this.checked)")
+        switchField.appendChild(checkbox);
+        var slider = document.createElement("span");
+        slider.setAttribute("class", "slider");
+        switchField.appendChild(slider);
+        settingsFieldRight.appendChild(switchField);
+        settingsFieldContainer.appendChild(settingsFieldRight);
+        document.getElementById("settingsAddonCurrentContainer").appendChild(settingsFieldContainer);          
+    }
+}
+
+function changeAddon(addon, url, element){
+    if(element){
+        ipcRenderer.send('download_addon', url);
+    }else{
+        ipcRenderer.send('remove_addon', addon);
+    }
 }

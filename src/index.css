@@ -461,6 +461,16 @@ button:focus {outline:0;}
 }
 
 /* CONFIGURAÇÕES*/
+.settingsFieldTitle {
+  font-size: 14px;
+  font-family: 'Avenir Medium';
+  color: rgba(255, 255, 255, 0.95);
+}
+.settingsFieldDesc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, .95);
+  margin-top: 5px;
+}
 
 #configBack{
   position: absolute;
