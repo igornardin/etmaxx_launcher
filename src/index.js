@@ -2,6 +2,8 @@ const { ipcRenderer } = require('electron');
 const http = require('https');
 const path = require('path');
 
+let arrayAddons;
+
 insertNews();
 searchPatches();
 searchAddons();
@@ -26,6 +28,7 @@ ipcRenderer.invoke('get_closeLauncher').then(function (results) {
 document.getElementById('wowDirectory').addEventListener('click', () => {
     ipcRenderer.invoke('Open_folder').then(function (results) {
         document.getElementById("wowDirectoryText").value = results;
+        updateAddons();
     });
 });
 
@@ -191,9 +194,9 @@ function setConfigCurrent(id){
 }
 
 function createAddonsTab(json){
-    var array = JSON.parse(json)["addons"];
-    for (let index = 0; index < array.length; index++) {
-        const element = array[index];
+    arrayAddons = JSON.parse(json)["addons"];
+    for (let index = 0; index < arrayAddons.length; index++) {
+        const element = arrayAddons[index];
         var settingsFieldContainer = document.createElement("div");
         settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
         var settingsFieldTitle = document.createElement("span");
@@ -214,6 +217,8 @@ function createAddonsTab(json){
         ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
             if(results)
                 document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+            else
+                document.getElementById("input_" + element["addon"]).removeAttribute("checked");
         });
         checkbox.setAttribute("onclick", "changeAddon('" + element["addon"] + "', '" + element["file"] + "', this.checked)")
         switchField.appendChild(checkbox);
@@ -223,6 +228,18 @@ function createAddonsTab(json){
         settingsFieldRight.appendChild(switchField);
         settingsFieldContainer.appendChild(settingsFieldRight);
         document.getElementById("settingsAddonCurrentContainer").appendChild(settingsFieldContainer);          
+    }
+}
+
+function updateAddons(){
+    for (let index = 0; index < arrayAddons.length; index++) {
+        const element = arrayAddons[index];
+        ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
+            if(results)
+                document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+            else
+                document.getElementById("input_" + element["addon"]).removeAttribute("checked");
+        });
     }
 }
 
