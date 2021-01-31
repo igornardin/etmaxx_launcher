@@ -32,9 +32,11 @@ const store = new Store({
   configName: 'user-preferences',
   defaults: {
     directory: '',
-    patch: 0
+    patch: 0,
+    closeLauncher: false
   }
 });
+store.write();
 
 function createWindow() {
   if (process.platform !== 'win32') {
@@ -56,7 +58,6 @@ function createWindow() {
     frame: false
   })
   mainWindow.removeMenu();
-
   mainWindow.loadFile('src/index.html');
 }
 
@@ -102,6 +103,9 @@ ipcMain.on('play_wow', (evt, arg) => {
   rimraf.sync(path.join(directory.toString(), 'cache'));
   write_realmlist();
   exec('"' + path.join(directory.toString(), 'Wow.exe') + '"');
+  if(store.get('closeLauncher')){
+    setTimeout(function(){mainWindow.close()}, 5000);
+  }
 })
 
 function shouldApplyPatch(){
@@ -141,8 +145,16 @@ ipcMain.handle('Open_folder', (evt, arg) => {
   return directory;
 })
 
-ipcMain.handle('return_directory', (evt, arg) => {
+ipcMain.handle('get_directory', (evt, arg) => {
   return store.get('directory');
+})
+
+ipcMain.handle('get_closeLauncher', (evt, arg) => {
+  return store.get('closeLauncher');
+})
+
+ipcMain.on('set_closeLauncher', (evt, value) => {
+  store.set('closeLauncher', value);
 })
 
 ipcMain.on('open_url', (event, arg) => {

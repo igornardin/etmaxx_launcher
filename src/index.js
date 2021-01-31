@@ -14,14 +14,22 @@ ipcRenderer.invoke('patch_applied').then(function (results) {
     document.getElementById("CurrentPatchValue").textContent = results;
 });
 
-ipcRenderer.invoke('return_directory').then(function (results) {
+ipcRenderer.invoke('get_directory').then(function (results) {
     document.getElementById("wowDirectoryText").value = results;
+});
+
+ipcRenderer.invoke('get_closeLauncher').then(function (results) {
+    document.getElementById("closeLauncher").checked = results;
 });
 
 document.getElementById('wowDirectory').addEventListener('click', () => {
     ipcRenderer.invoke('Open_folder').then(function (results) {
         document.getElementById("wowDirectoryText").value = results;
     });
+});
+
+document.getElementById('closeLauncher').addEventListener('click', () => {
+    ipcRenderer.send('set_closeLauncher', document.getElementById("closeLauncher").checked);
 });
 
 document.getElementById('config').addEventListener('click', () => {
@@ -127,11 +135,8 @@ function createSlideNews(json){
     div_caption.appendChild(div_caption_title);
     div_news.appendChild(div_caption);
     div_news.appendChild(document.createElement("br"));        
-    var element = document.getElementById("main_news");
-    element.appendChild(div_news);   
-
-
-     for(var i = 1; i < 4; i++) {
+    document.getElementById("main_news").appendChild(div_news);   
+    for(var i = 1; i < 4; i++) {
         var obj = array[i];
         //Cria div principal
         var div_news = document.createElement("button");
@@ -152,8 +157,7 @@ function createSlideNews(json){
         div_caption.appendChild(div_caption_title);
         div_news.appendChild(div_caption);
         div_news.appendChild(document.createElement("br"));        
-        var element = document.getElementById("other_news");
-        element.appendChild(div_news);   
+        document.getElementById("other_news").appendChild(div_news);   
     }  
 }
 
