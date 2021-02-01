@@ -250,3 +250,11 @@ function changeAddon(addon, url, element){
         ipcRenderer.send('remove_addon', addon);
     }
 }
+
+ipcRenderer.on('update_available', () => {
+    ipcRenderer.removeAllListeners('update_available');
+    let element = document.getElementById("play");
+    element.innerHTML = "Atualizando...";
+    element.disabled = true;
+    element.setAttribute("class", "buttons play_disable");
+  });

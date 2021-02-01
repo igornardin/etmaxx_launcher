@@ -128,7 +128,7 @@ button:focus {outline:0;}
   top: 0px;
 }
 
-#play {
+.play {
 	background-color:#1391b8;
 	border-radius:3px;
 	border:1px solid #1184a7;
@@ -137,18 +137,45 @@ button:focus {outline:0;}
 	font-family:'Avenir Medium';
 	font-size:20px;
 	font-weight:bold;
-	padding:10px 60px;
 	text-decoration:none;
   text-shadow:0px 1px 0px #1f1f26;
   position: absolute;
   bottom: 60px;
   left: 40px;
+  width: 170px;
+  height: 50px;
+  text-align: center;
 }
 
-#play:hover {
+.play_disable {
+	background-color:#797979;
+	border-radius:3px;
+	border:1px solid #3f3f3f;
+	color:#ffffff;
+	font-family:'Avenir Medium';
+	font-size:14px;
+	font-weight:bold;
+	text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f26;
+  position: absolute;
+  bottom: 60px;
+  left: 40px;
+  width: 170px;
+  height: 50px;
+  text-align: center;
+}
+
+.play:hover {
 	background-color:#3c97b3;
 }
-#play:active {
+.play:active {
+	position:absolute;
+}
+
+.play_disable:hover {
+	background-color:#797979;
+}
+.play_disable:active {
 	position:absolute;
 }
 

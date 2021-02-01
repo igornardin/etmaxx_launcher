@@ -75,6 +75,10 @@ autoUpdater.on('update-downloaded', (info) => {
   autoUpdater.quitAndInstall();
 })
 
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+
 app.on('window-all-closed', () => {
   app.quit()
 })
