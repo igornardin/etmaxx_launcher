@@ -194,10 +194,10 @@ button:focus {outline:0;}
 }
 
 .news{
-  width: 65%;
+  width: 60%;
   position: absolute;
-  top: 5%;
-  left: 30%;
+  top: 10%;
+  left: 35%;
 }
 
 #main_news{
@@ -739,6 +739,7 @@ button:focus {outline:0;}
   transition: 0.25s ease;
   white-space: nowrap;
   outline: none;
+  color: white;
 }
 .settingsFileSelButton:hover,
 .settingsFileSelButton:focus {

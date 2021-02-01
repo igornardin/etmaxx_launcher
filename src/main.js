@@ -240,6 +240,7 @@ function applyPatch() {
   progressBar
     .on('completed', function () {
       progressBar.detail = 'Atualização finalizada. Saindo...';
+      store.set('patch', lastPatchToApply);
     })
     .on('aborted', function () {
       console.info(`A atualização foi abortada...`);
@@ -248,7 +249,6 @@ function applyPatch() {
       progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
   });
   downloadFiles(progressBar);
-  store.set('patch', lastPatchToApply);
   return true;
 }
 
