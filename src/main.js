@@ -59,7 +59,7 @@ function createWindow() {
     frame: false
   })
   mainWindow.removeMenu();
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.loadFile('src/index.html');
 }
 
