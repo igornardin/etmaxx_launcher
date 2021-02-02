@@ -5,6 +5,7 @@ const rimraf = require("rimraf");
 const { dialog } = require('electron');
 const Store = require('./store.js');
 var fs = require('fs');
+var glob = require("glob")
 const log = require('electron-log');
 const path = require('path');
 const DecompressZip = require('decompress-zip');
@@ -58,6 +59,7 @@ function createWindow() {
     frame: false
   })
   mainWindow.removeMenu();
+  mainWindow.webContents.openDevTools();
   mainWindow.loadFile('src/index.html');
 }
 
@@ -188,7 +190,9 @@ ipcMain.handle('process_patch', (evt, arg) => {
 })
 
 ipcMain.handle('verify_addon', (evt, addon) => {
-  return fs.existsSync(path.join(directory.toString(), 'interface', 'addons', addon))
+  let foldername = addon + '*';
+  let files = glob.sync(path.join(directory.toString(), 'interface', 'addons', foldername));
+  return files.length == 0 ? false : true;
 });
 
 ipcMain.on('download_addon', (evt, url) => {
@@ -219,7 +223,8 @@ ipcMain.on('download_addon', (evt, url) => {
 });
 
 ipcMain.on('remove_addon', (evt, addon) => {
-  rimraf.sync(path.join(directory.toString(), 'interface', 'addons', addon));
+  let foldername = addon + '*';
+  rimraf.sync(path.join(directory.toString(), 'interface', 'addons', foldername));
 });
 
 ipcMain.handle('apply_patch', () => {
