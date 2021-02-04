@@ -38,13 +38,8 @@
             <div class="frameResizableVert frameDragPadder"></div>
         </div>
     </div>
-    <!-- Tela de loading -->
-    <div id="newsLoading">
-        <img id="loadCenterImage" src="../src/assets/images/Logo.png">
-        <img id="loadSpinnerImage" class="rotating" src="../src/assets/images/ring.png">
-    </div>
     <!-- Tela principal -->
-    <div id="body_main" style="display: none;">
+    <div id="body_main">
         <img src="assets/images/Logo.png" id="logoEtmaxx">
         <div id="redesSociais">
             <div id="media">
@@ -154,7 +149,11 @@
         <button id="play" class="buttons play">PLAY</button><button id="config" class="buttons"><i
                 class="fas fa-cog"></i></button>
         <button id="buttonPatch" style="display: none;">Patch disponível</button>
-        <div class="news">
+        <div id="newsLoading">
+            <img id="loadCenterImage" src="../src/assets/images/Logo.png">
+            <img id="loadSpinnerImage" class="rotating" src="../src/assets/images/ring.png">
+        </div>    
+        <div id="news_div" class="news" style="display: none;">
             <div id="main_news"></div>
             <div id="other_news"></div>
         </div>

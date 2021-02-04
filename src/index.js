@@ -84,7 +84,7 @@ function insertNews(){
             res.on("end", () => {
                 createSlideNews(JSON.parse(data));
                 document.getElementById("newsLoading").setAttribute("style", "display: none");
-                openMain();
+                document.getElementById("news_div").setAttribute("style", "display: block");
             })
         }
     )
