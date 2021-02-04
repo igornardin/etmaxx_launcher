@@ -429,10 +429,9 @@ button:focus {outline:0;}
 /* Social media icon shared styles. */
 .mediaSVG {
   fill: #ffffff;
-  height: 12px;
   transition: 0.25s ease;
   cursor: pointer;
-  height: 20px;
+  height: 18px;
   width: 40px;
 }
 .mediaSVG:hover,
@@ -448,6 +447,19 @@ button:focus {outline:0;}
 }
 #linkSVG:active {
   fill: gold;
+}
+
+#tutorialSVG{
+  enable-background:new 0 0 30.318 30.318;
+}
+
+/* Site icon colors. */
+#tutorialSVG:hover,
+#twitterURL:focus #tutorialSVG {
+  fill: rgb(90, 165, 92);
+}
+#tutorialSVG:active {
+  fill: rgb(90, 165, 92);
 }
 
 /* Twitter icon colors. */
