@@ -17,6 +17,10 @@ builder.build({
                 {
                     target: 'nsis',
                     arch: 'x64'
+                },
+                {
+                    target: 'nsis',
+                    arch: 'ia32'
                 }
             ]
         },

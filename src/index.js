@@ -18,7 +18,13 @@ ipcRenderer.invoke('patch_applied').then(function (results) {
 });
 
 ipcRenderer.invoke('get_directory').then(function (results) {
-    document.getElementById("wowDirectoryText").value = results;
+    if(!results){
+        ipcRenderer.send('message', 'Atenção!', 'Antes de qualquer coisa, selecione o diretório que seu World of Warcraft esteja instalado no botão de configurações ao lado do botão Play!')
+    }else
+    {
+        document.getElementById("wowDirectoryText").value = results;
+    }
+    
 });
 
 ipcRenderer.invoke('get_closeLauncher').then(function (results) {
@@ -214,11 +220,17 @@ function createAddonsTab(json){
         var checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
         checkbox.setAttribute("id", "input_" + element["addon"]);
-        ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
-            if(results)
-                document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
-            else
-                document.getElementById("input_" + element["addon"]).removeAttribute("checked");
+        ipcRenderer.invoke('get_directory').then(function (results) {
+            if(!results){
+                document.getElementById("input_" + element["addon"]).setAttribute("disabled", "true");
+            }else{
+                ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
+                    if(results)
+                        document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+                    else
+                        document.getElementById("input_" + element["addon"]).removeAttribute("checked");
+                });
+            }
         });
         checkbox.setAttribute("onclick", "changeAddon('" + element["addon"] + "', '" + element["file"] + "', this.checked)")
         switchField.appendChild(checkbox);
