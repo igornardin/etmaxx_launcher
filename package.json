@@ -1,6 +1,6 @@
 {
   "name": "etmaxx_launcher",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "author": "EtMaXx",
   "description": "EtMaXx Launcher",
   "main": "src/main.js",
@@ -20,6 +20,7 @@
     "electron-progressbar": "^2.0.0",
     "electron-updater": "^4.3.5",
     "glob": "^7.1.6",
+    "open": "^7.4.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {

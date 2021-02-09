@@ -1,17 +1,16 @@
-const { app, BrowserWindow } = require('electron')
-const { ipcMain } = require('electron')
-const { exec } = require('child_process');
-const rimraf = require("rimraf");
-const { dialog } = require('electron');
-const Store = require('./store.js');
-var fs = require('fs');
-var glob = require("glob")
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const log = require('electron-log');
-const path = require('path');
-const DecompressZip = require('decompress-zip');
 const { autoUpdater } = require("electron-updater");
 const { download } = require('electron-dl');
 const ProgressBar = require('electron-progressbar');
+const { spawn } = require('child_process');
+const rimraf = require("rimraf");
+const Store = require('./store.js');
+var fs = require('fs');
+var glob = require("glob")
+const path = require('path');
+const DecompressZip = require('decompress-zip');
+const open = require('open');
 
 /* Configurações de log */
 log.transports.file.level = 'info';
@@ -150,9 +149,14 @@ ipcMain.on('play_wow', (evt, arg) => {
   }
   rimraf.sync(path.join(directory.toString(), 'cache'));
   write_realmlist();
-  exec('"' + path.join(directory.toString(), 'Wow.exe') + '"');
+  let subprocess = spawn(path.join(directory.toString(), 'Wow.exe'), {
+    detached: true,
+    stdio: 'ignore',
+    cwd: directory.toString()
+  });
+  subprocess.unref();
   if(store.get('closeLauncher')){
-    setTimeout(function(){mainWindow.close()}, 5000);
+    app.quit();
   }
 })
 
@@ -256,6 +260,10 @@ ipcMain.handle('Open_folder', (evt, arg) => {
   directory = dialog.showOpenDialogSync({
     properties: ['openDirectory']
   })
+  if(!directory){
+    store.set('directory', '');
+    return '';
+  }
   store.set('directory', directory.toString());
   return directory;
 })
@@ -287,17 +295,14 @@ ipcMain.handle('patch_applied', (evt, arg) => {
  * Abre URL no browser
  */
 ipcMain.on('open_url', (event, arg) => {
-  exec('start ' + arg);
+  open(arg);
 })
 
 /**
  * Controle de addon
  */
 ipcMain.handle('verify_addon', (evt, addon) => {
-  if (!directory) {
-    return false;
-  }
-  if (!installValid(directory)) {
+  if (!installValid(directory, false)) {
     return false;
   }
   let foldername = addon + '*';
@@ -388,17 +393,20 @@ async function downloadFile(fileDownload) {
  * Testa se o diretório é válido
  * @param {String} directoryValid 
  */
-function installValid(directoryValid) {
+function installValid(directoryValid, showmessage = true) {
   if (directoryValid === '' || !directoryValid) {
-    dialog.showErrorBox("Erro!", "Selecione um diretório antes de iniciar o jogo!");
+    if (showmessage)
+      dialog.showErrorBox("Erro!", "Selecione um diretório antes de iniciar o jogo!");
     return false;
   }
   if (!fs.existsSync(path.join(directoryValid.toString(), 'data'))) {
-    dialog.showErrorBox("Erro!", "Diretório Data não existe dentro do diretório do World of Warcraft!");
+    if (showmessage)
+      dialog.showErrorBox("Erro!", "Diretório Data não existe dentro do diretório do World of Warcraft!");
     return false;
   }
   if (!fs.existsSync(path.join(directoryValid.toString(), 'wow.exe'))) {
-    dialog.showErrorBox("Erro!", "Não encontrei executável dentro do diretório do World of Warcraft!");
+    if (showmessage)
+      dialog.showErrorBox("Erro!", "Não encontrei executável dentro do diretório do World of Warcraft!");
     return false;
   }
   return true;

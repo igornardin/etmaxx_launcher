@@ -251,17 +251,16 @@ button:focus {outline:0;}
 }
 
 .image_news_main{
-  width: 80%;
-  height: 80%;
-  max-height: 415px;
+  width: auto;
+  height: 300px;
   max-width: 720px;
   position: relative;
 }
 
 .image_news_bottom{
-  width: 100%;
+  width: auto;
+  max-width: 240px;
   position: relative;
-  max-height: 150px;
   height: 150px;
 }
 

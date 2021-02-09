@@ -1,6 +1,5 @@
 const { ipcRenderer } = require('electron');
 const http = require('https');
-const path = require('path');
 
 let arrayAddons;
 
