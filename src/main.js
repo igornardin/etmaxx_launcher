@@ -95,16 +95,18 @@ autoUpdater.on('update-downloaded', (info) => {
 /**
  * Se tem atualização nova, tranca o botão de play
  */
-autoUpdater.on('update-available', () => {
+autoUpdater.on('update-available', (UpdateInfo) => {
   mainWindow.webContents.send('update_available');
+  let size = UpdateInfo["files"][0]["size"] / 1000000;
   autoUpdateProgressBar = new ProgressBar({
     text: 'Atualizando o launcher...',
     indeterminate: false,
-    detail: 'Espere...',
+    detail: `Espere... Recebido 0 MB de ${size} MB`,
     maxValue: 100,
     browserWindow: {
       parent: mainWindow,
       icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
+      closable: false
     }
   });
 });
@@ -113,6 +115,12 @@ autoUpdater.on('update-available', () => {
  * Mostra atualização do download
  */
 autoUpdater.on('download-progress', (progress) => {
+  // Se a janela foi finalizada antes da hora
+  if (!autoUpdateProgressBar.isInProgress())
+    return
+  let size = progress.total / 1000000;
+  let downloaded = progress.transferred / 1000000;
+  autoUpdateProgressBar.detail = `Espere... Recebido ${downloaded} MB de ${size} MB`;
   autoUpdateProgressBar.value = progress.percent;
 });
 
@@ -246,10 +254,10 @@ function applyPatch() {
  */
 async function downloadFiles(progressBar){
   for (let index = 0; index < filesDownload.length; index++) {
-    log.info(await downloadFile(filesDownload[index]).then((result) => {
+    await downloadFile(filesDownload[index]).then((result) => {
       progressBar.value += 1;
       unzipFile(result, path.join(directory.toString(), filesDestination[index]), progressBar);
-    }));
+    });
   }
 }
 
