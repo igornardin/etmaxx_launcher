@@ -5,7 +5,7 @@ let arrayAddons;
 
 insertNews();
 searchPatches();
-searchAddons();
+searchOptional();
 setConfigCurrent("settingsTabLauncher");
 
 ipcRenderer.invoke('get_version').then(function (results) {
@@ -33,7 +33,7 @@ ipcRenderer.invoke('get_closeLauncher').then(function (results) {
 document.getElementById('wowDirectory').addEventListener('click', () => {
     ipcRenderer.invoke('Open_folder').then(function (results) {
         document.getElementById("wowDirectoryText").value = results;
-        updateAddons();
+        updateOptional();
     });
 });
 
@@ -118,11 +118,11 @@ function searchPatches(){
     .end()
 }
 
-function searchAddons(){
+function searchOptional(){
     http.request(
         {
             hostname: "etmaxx.com.br",
-            path: "/assets/launcher/addons.json"
+            path: "/assets/launcher/optional.json"
         },
         res => {
             let data = ""
@@ -130,7 +130,7 @@ function searchAddons(){
                 data += d;
             })
             res.on("end", () => {
-                createAddonsTab(data);
+                createOptionalTab(data);
             })
         }
     )
@@ -198,7 +198,13 @@ function setConfigCurrent(id){
     document.getElementById(id).setAttribute("style", "display: block");
 }
 
+function createOptionalTab(json){
+    createAddonsTab(json);
+    createOthersTab(json);
+}
+
 function createAddonsTab(json){
+    json = json.replace(/\\/g, "\\\\");
     arrayAddons = JSON.parse(json)["addons"];
     for (let index = 0; index < arrayAddons.length; index++) {
         const element = arrayAddons[index];
@@ -206,7 +212,7 @@ function createAddonsTab(json){
         settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
         var settingsFieldTitle = document.createElement("span");
         settingsFieldTitle.setAttribute("class", "settingsFieldTitle");
-        settingsFieldTitle.innerHTML = element["addon"];
+        settingsFieldTitle.innerHTML = element["name"];
         settingsFieldContainer.appendChild(settingsFieldTitle);
         var settingsFieldDesc = document.createElement("span");
         settingsFieldDesc.setAttribute("class", "settingsFieldDesc");
@@ -218,20 +224,20 @@ function createAddonsTab(json){
         switchField.setAttribute("class", "switch");
         var checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
-        checkbox.setAttribute("id", "input_" + element["addon"]);
+        checkbox.setAttribute("id", "input_addon_" + element["name"]);
         ipcRenderer.invoke('get_directory').then(function (results) {
             if(!results){
-                document.getElementById("input_" + element["addon"]).setAttribute("disabled", "true");
+                document.getElementById("input_addon_" + element["name"]).setAttribute("disabled", "true");
             }else{
-                ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
+                ipcRenderer.invoke('verify_file', element["destination"], element["file_match"]).then(function (results) {
                     if(results)
-                        document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+                        document.getElementById("input_addon_" + element["name"]).setAttribute("checked", true);
                     else
-                        document.getElementById("input_" + element["addon"]).removeAttribute("checked");
+                        document.getElementById("input_addon_" + element["name"]).removeAttribute("checked");
                 });
             }
         });
-        checkbox.setAttribute("onclick", "changeAddon('" + element["addon"] + "', '" + element["file"] + "', this.checked)")
+        checkbox.setAttribute("onclick", "changeOptional(this.checked, '" + element["destination"] + "', '" + element["url"] + "', '" + element["file_match"] + "')")
         switchField.appendChild(checkbox);
         var slider = document.createElement("span");
         slider.setAttribute("class", "slider");
@@ -242,23 +248,68 @@ function createAddonsTab(json){
     }
 }
 
-function updateAddons(){
+function createOthersTab(json){
+    json = json.replace(/\\/g, "\\\\");
+    arrayAddons = JSON.parse(json)["other"];
     for (let index = 0; index < arrayAddons.length; index++) {
         const element = arrayAddons[index];
-        ipcRenderer.invoke('verify_addon', element["addon"]).then(function (results) {
+        var settingsFieldContainer = document.createElement("div");
+        settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
+        var settingsFieldTitle = document.createElement("span");
+        settingsFieldTitle.setAttribute("class", "settingsFieldTitle");
+        settingsFieldTitle.innerHTML = element["name"];
+        settingsFieldContainer.appendChild(settingsFieldTitle);
+        var settingsFieldDesc = document.createElement("span");
+        settingsFieldDesc.setAttribute("class", "settingsFieldDesc");
+        settingsFieldDesc.innerHTML = element["description"];
+        settingsFieldContainer.appendChild(settingsFieldDesc);
+        var settingsFieldRight = document.createElement("div");
+        settingsFieldRight.setAttribute("class", "settingsFieldRight");
+        var switchField = document.createElement("label");
+        switchField.setAttribute("class", "switch");
+        var checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.setAttribute("id", "input_other_" + element["name"]);
+        ipcRenderer.invoke('get_directory').then(function (results) {
+            if(!results){
+                document.getElementById("input_other_" + element["name"]).setAttribute("disabled", "true");
+            }else{
+                ipcRenderer.invoke('verify_file', element["destination"], element["file_match"]).then(function (results) {
+                    if(results)
+                        document.getElementById("input_other_" + element["name"]).setAttribute("checked", true);
+                    else
+                        document.getElementById("input_other_" + element["name"]).removeAttribute("checked");
+                });
+            }
+        });
+        checkbox.setAttribute("onclick", "changeOptional(this.checked, '" + element["destination"] + "', '" + element["url"] + "', '" + element["file_match"] + "')")
+        switchField.appendChild(checkbox);
+        var slider = document.createElement("span");
+        slider.setAttribute("class", "slider");
+        switchField.appendChild(slider);
+        settingsFieldRight.appendChild(switchField);
+        settingsFieldContainer.appendChild(settingsFieldRight);
+        document.getElementById("settingsOtherCurrentContainer").appendChild(settingsFieldContainer);          
+    }
+}
+
+function updateOptional(){
+    for (let index = 0; index < arrayAddons.length; index++) {
+        const element = arrayAddons[index];
+        ipcRenderer.invoke('verify_file', element["destination"], element["file_match"]).then(function (results) {
             if(results)
-                document.getElementById("input_" + element["addon"]).setAttribute("checked", true);
+                document.getElementById("input_addon_" + element["name"]).setAttribute("checked", true);
             else
-                document.getElementById("input_" + element["addon"]).removeAttribute("checked");
+                document.getElementById("input_addon_" + element["name"]).removeAttribute("checked");
         });
     }
 }
 
-function changeAddon(addon, url, element){
+function changeOptional(element, destination, url, file_match){
     if(element){
-        ipcRenderer.send('download_addon', url);
+        ipcRenderer.send('download_optional', destination, url);
     }else{
-        ipcRenderer.send('remove_addon', addon);
+        ipcRenderer.send('remove_optional', destination, file_match);
     }
 }
 

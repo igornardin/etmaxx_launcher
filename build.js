@@ -6,7 +6,7 @@ builder.build({
     config: {
         appId: 'etmaxxlauncher',
         productName: 'EtMaXx_Launcher',
-        artifactName: '${productName}-setup-${version}.${ext}',
+        artifactName: '${productName}-setup.${ext}',
         copyright: 'Copyright © 2021 EtMaXx FunServer. Todos os direitos reservados',
         directories: {
             buildResources: 'build',

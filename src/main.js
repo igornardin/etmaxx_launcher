@@ -29,8 +29,8 @@ let patchbefore;
 let lastPatchToApply;
 
 /* Arquivos pra baixar e o equivalente destino */
-let filesDownload = [];
-let filesDestination = [];
+let patchFilesDownload = [];
+let patchFilesDestination = [];
 
 /**
  * Configurações salvas do launcher
@@ -70,6 +70,32 @@ function createWindow() {
   mainWindow.removeMenu();
   // mainWindow.webContents.openDevTools();
   mainWindow.loadFile('src/index.html');
+
+  mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+    var progressBar = new ProgressBar({
+      text: 'Baixando...',
+      indeterminate: false,
+      detail: 'Espere...',
+      maxValue: 100,
+      browserWindow: {
+        parent: mainWindow,
+        icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
+      }
+    });
+    progressBar
+    .on('completed', function () {
+      progressBar.detail = 'Instalação finalizada. Saindo...';
+    })
+    .on('aborted', function () {
+      console.info(`A atualização foi abortada...`);
+    }); 
+    item.on('updated', (event, state) => {
+      if(state === 'progressing' && !progressBar.isCompleted()){
+        progressBar.detail = `Atualização ${item.getReceivedBytes()} bytes de ${item.getTotalBytes()} bytes...`;
+        progressBar.value = (item.getReceivedBytes() / item.getTotalBytes()) * 100;  
+      }
+    })
+  });
 }
 
 /**
@@ -206,12 +232,13 @@ ipcMain.handle('apply_patch', () => {
 
 ipcMain.handle('process_patch', (evt, arg) => {
   let hasPatch = false;
-  patchsToApply = JSON.parse(arg)["patchs"];
+  json = arg.replace(/\\/g, "\\\\");
+  patchsToApply = JSON.parse(json)["patchs"];
   for (let indexPatch = 0; indexPatch < patchsToApply.length; indexPatch++) {
     if (patchsToApply[indexPatch]["patch_number"] > store.get('patch')) {
       hasPatch = true;
-      filesDownload.push(patchsToApply[indexPatch]["file"]);
-      filesDestination.push(patchsToApply[indexPatch]["destination"]);
+      patchFilesDownload.push(patchsToApply[indexPatch]["file"]);
+      patchFilesDestination.push(patchsToApply[indexPatch]["destination"]);
       lastPatchToApply = patchsToApply[indexPatch]["patch_number"];
     }
   }
@@ -222,41 +249,23 @@ function applyPatch() {
   if (!installValid(directory)) {
     return false;
   }
-  rimraf.sync(path.join(directory.toString(), 'downloads', '*'));
-  var progressBar = new ProgressBar({
-    text: 'Atualizando o cliente...',
-    indeterminate: false,
-    detail: 'Espere...',
-    maxValue: filesDownload.length * 2,
-    browserWindow: {
-      parent: mainWindow,
-      icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
-    }
-  });
-  progressBar
-    .on('completed', function () {
-      progressBar.detail = 'Atualização finalizada. Saindo...';
-      store.set('patch', lastPatchToApply);
-    })
-    .on('aborted', function () {
-      console.info(`A atualização foi abortada...`);
-    })
-    .on('progress', function (value) {
-      progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
-  });
-  downloadFiles(progressBar);
+  patchbefore = store.get('patch');
+  removeDownloads();
+  downloadFilesPatch();
   return true;
 }
 
 /**
  * Controle de arquivos do patch
- * @param {ProgressBar} progressBar 
  */
-async function downloadFiles(progressBar){
-  for (let index = 0; index < filesDownload.length; index++) {
-    await downloadFile(filesDownload[index]).then((result) => {
-      progressBar.value += 1;
-      unzipFile(result, path.join(directory.toString(), filesDestination[index]), progressBar);
+async function downloadFilesPatch(){
+  for (let index = 0; index < patchFilesDownload.length; index++) {
+    await downloadFile(patchFilesDownload[index]).then((result) => {
+      unzipFile(result, path.join(directory.toString(), patchFilesDestination[index])).then(() => {
+        store.set('patch', lastPatchToApply);
+      }).catch(() => {
+        store.set('patch', patchbefore);
+      });
     });
   }
 }
@@ -307,81 +316,50 @@ ipcMain.on('open_url', (event, arg) => {
 })
 
 /**
- * Controle de addon
+ * Controle de opcionais
  */
-ipcMain.handle('verify_addon', (evt, addon) => {
-  if (!installValid(directory, false)) {
-    return false;
-  }
-  let foldername = addon + '*';
-  let files = glob.sync(path.join(directory.toString(), 'interface', 'addons', foldername));
-  return files.length == 0 ? false : true;
-});
-
-ipcMain.on('download_addon', (evt, url) => {
+ipcMain.on('download_optional', (evt, destination, url) => {
   if (!installValid(directory)) {
     return false;
   }
-  var progressBar = new ProgressBar({
-    text: 'Baixando o addon...',
-    indeterminate: false,
-    detail: 'Espere...',
-    maxValue: 2,
-    browserWindow: {
-      parent: mainWindow,
-      icon: path.join(__dirname, 'assets', 'images', 'favicon.ico'),
-    }
-  });
-  progressBar
-    .on('completed', function () {
-      progressBar.detail = 'Atualização finalizada. Saindo...';
-    })
-    .on('aborted', function () {
-      console.info(`A atualização foi abortada...`);
-    })
-    .on('progress', function (value) {
-      progressBar.detail = `Atualização ${value} de ${progressBar.getOptions().maxValue}...`;
-  });  
+  removeDownloads();
   downloadFile(url).then((result) => {
-    progressBar.value += 1;
-    unzipFile(result, path.join(directory.toString(), 'interface', 'addons'), progressBar);
+    unzipFile(result, path.join(directory.toString(), destination));
   });
 });
 
-ipcMain.on('remove_addon', (evt, addon) => {
+ipcMain.on('remove_optional', (evt, destination, file_match) => {
   if (!installValid(directory)) {
     return false;
   }
-  let foldername = addon + '*';
-  rimraf.sync(path.join(directory.toString(), 'interface', 'addons', foldername));
+  rimraf.sync(path.join(directory.toString(), destination, file_match));
 });
-
 
 /**
  * Descompacta o arquivo
  * @param {Electron.DownloadItem} result 
  * @param {String} destination 
- * @param {ProgressBar} progressBar 
  */
-async function unzipFile(result, destination, progressBar){
-  var unzipper = new DecompressZip(result.getSavePath());
-  unzipper.on('error', function (err) {
-      log.info(err);
-      log.info(result.getSavePath());
-      log.info(destination);
-      dialog.showErrorBox("Erro na aplicação do patch/addon", "Não foi possível aplicar o download no client do World of Warcraft. Tente novamente mais tarde!");
-      store.set('patch', patchbefore);
-      progressBar.close();
-  });
-  unzipper.on('extract', function (log) {
-    console.log('Finished extracting');
-    progressBar.value += 1;
-  });
-  unzipper.extract({
-    path: destination,
-    filter: function (file) {
-        return file.type !== "SymbolicLink";
-    }
+function unzipFile(result, destination){
+  return new Promise((resolve, reject) => {
+    var unzipper = new DecompressZip(result.getSavePath());
+    unzipper.on('error', function (err) {
+        log.info(err);
+        log.info(result.getSavePath());
+        log.info(destination);
+        dialog.showErrorBox("Erro na aplicação do download", "Não foi possível aplicar o download no client do World of Warcraft. Tente novamente mais tarde!");
+        reject();
+    });
+    unzipper.on('extract', function (log) {
+      console.log('Finished extracting');
+      resolve();
+    });
+    unzipper.extract({
+      path: destination,
+      filter: function (file) {
+          return file.type !== "SymbolicLink";
+      }
+    });
   });
 }
 
@@ -429,3 +407,18 @@ ipcMain.on('message', (evt, title, message) => {
     message: message
   });
 });
+
+/**
+ * Verifica se o arquivo existe
+ */
+ipcMain.handle('verify_file', (evt, destination, file_match) => {
+  if (!installValid(directory, false)) {
+    return false;
+  }
+  let files = glob.sync(path.join(directory.toString(), destination, file_match));
+  return files.length == 0 ? false : true;
+});
+
+function removeDownloads(){
+  rimraf.sync(path.join(directory.toString(), 'downloads', '*'));
+}

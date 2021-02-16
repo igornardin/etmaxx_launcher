@@ -175,6 +175,8 @@
                             <button class="settingsNavItem"
                                 onclick="setConfigCurrent('settingsTabAddons')">Addons</button>
                             <button class="settingsNavItem"
+                                onclick="setConfigCurrent('settingsTabOther')">Opcionais</button>
+                            <button class="settingsNavItem"
                                 onclick="setConfigCurrent('settingsTabAbout')">Sobre</button>
                         </div>
                     </div>
@@ -229,6 +231,14 @@
                                 addon, ele será deletado!</b></span>
                     </div>
                     <div id="settingsAddonCurrentContainer"></div>
+                </div>
+                <div id="settingsTabOther" class="settingsTab" style="display: none;">
+                    <div class="settingsTabHeader">
+                        <span class="settingsTabHeaderText">Configurações de patchs opcionais</span>
+                        <span class="settingsTabHeaderDesc">Patchs que são distribuídos pelo team. <b>Ao desmarcar um
+                                patch, ele será deletado!</b></span>
+                    </div>
+                    <div id="settingsOtherCurrentContainer"></div>
                 </div>
                 <div id="settingsTabAbout" class="settingsTab" style="display: none;">
                     <div class="settingsTabHeader">
