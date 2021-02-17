@@ -91,7 +91,7 @@ function createWindow() {
     }); 
     item.on('updated', (event, state) => {
       if(state === 'progressing' && !progressBar.isCompleted()){
-        progressBar.detail = `Atualização ${item.getReceivedBytes()} bytes de ${item.getTotalBytes()} bytes...`;
+        progressBar.detail = `Atualização ${bytesToSize(item.getReceivedBytes())} de ${bytesToSize(item.getTotalBytes())}...`;
         progressBar.value = (item.getReceivedBytes() / item.getTotalBytes()) * 100;  
       }
     })
@@ -421,4 +421,11 @@ ipcMain.handle('verify_file', (evt, destination, file_match) => {
 
 function removeDownloads(){
   rimraf.sync(path.join(directory.toString(), 'downloads', '*'));
+}
+
+function bytesToSize(bytes) {
+  var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes == 0) return '0 Byte';
+  var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+  return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 }

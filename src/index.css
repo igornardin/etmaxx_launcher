@@ -512,6 +512,20 @@ button:focus {outline:0;}
   margin-top: 5px;
 }
 
+.settingsFieldTitleOpcionais {
+  font-size: 14px;
+  font-family: 'Avenir Medium';
+  color: rgba(255, 255, 255, 0.95);
+  width: 25%;
+}
+.settingsFieldDescOpcionais {
+  font-size: 12px;
+  color: rgba(255, 255, 255, .95);
+  margin: 5px;
+  text-align: left;
+  width: 65%;
+}
+
 #configBack{
   position: absolute;
   left: 20px;
@@ -720,7 +734,7 @@ button:focus {outline:0;}
   border-bottom: 1px solid rgba(255, 255, 255, 0.50);
   margin-bottom: 20px;
   margin-top: 20px;
-  width: 75%;
+  width: 90%;
 }
 
 /* File selector title. */
@@ -764,7 +778,7 @@ button:focus {outline:0;}
   align-items: center;
   justify-content: space-between;
   padding: 20px 0px;
-  width: 75%;
+  width: 90%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.50);
 }
 

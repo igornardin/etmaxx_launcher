@@ -212,11 +212,15 @@ function createAddonsTab(json){
         var settingsFieldContainer = document.createElement("div");
         settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
         var settingsFieldTitle = document.createElement("span");
-        settingsFieldTitle.setAttribute("class", "settingsFieldTitle");
+        settingsFieldTitle.setAttribute("class", "settingsFieldTitleOpcionais");
         settingsFieldTitle.innerHTML = element["name"];
         settingsFieldContainer.appendChild(settingsFieldTitle);
         var settingsFieldDesc = document.createElement("span");
-        settingsFieldDesc.setAttribute("class", "settingsFieldDesc");
+        settingsFieldDesc.setAttribute("id", "file_size_addon_" + element["name"]);
+        settingsFieldDesc.setAttribute("class", "settingsFieldDescOpcionais");
+        getFileDownloadSize(element["url"], (res) => {
+            document.getElementById("file_size_addon_" + element["name"]).innerHTML = element["description"] + "<br>Tamanho: " + bytesToSize(res.headers["content-length"]);
+        });
         settingsFieldDesc.innerHTML = element["description"];
         settingsFieldContainer.appendChild(settingsFieldDesc);
         var settingsFieldRight = document.createElement("div");
@@ -261,8 +265,11 @@ function createOthersTab(json){
         settingsFieldTitle.innerHTML = element["name"];
         settingsFieldContainer.appendChild(settingsFieldTitle);
         var settingsFieldDesc = document.createElement("span");
+        settingsFieldDesc.setAttribute("id", "file_size_other_" + element["name"]);
         settingsFieldDesc.setAttribute("class", "settingsFieldDesc");
-        settingsFieldDesc.innerHTML = element["description"];
+        getFileDownloadSize(element["url"], (res) => {
+            document.getElementById("file_size_other_" + element["name"]).innerHTML = element["description"] + "<br>Tamanho: " + bytesToSize(res.headers["content-length"]);
+        });
         settingsFieldContainer.appendChild(settingsFieldDesc);
         var settingsFieldRight = document.createElement("div");
         settingsFieldRight.setAttribute("class", "settingsFieldRight");
@@ -329,4 +336,15 @@ ipcRenderer.on('update_available', () => {
     element.innerHTML = "Atualizando...";
     element.disabled = true;
     element.setAttribute("class", "buttons play_disable");
-  });
+});
+
+function getFileDownloadSize(url, callback){
+    http.request(url, {method: "HEAD"}, callback).end();
+}
+
+function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return '0 Byte';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+ }
