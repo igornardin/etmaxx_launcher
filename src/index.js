@@ -2,6 +2,7 @@ const { ipcRenderer } = require('electron');
 const http = require('https');
 
 let arrayAddons;
+let arrayOthers;
 
 insertNews();
 searchPatches();
@@ -250,9 +251,9 @@ function createAddonsTab(json){
 
 function createOthersTab(json){
     json = json.replace(/\\/g, "\\\\");
-    arrayAddons = JSON.parse(json)["other"];
-    for (let index = 0; index < arrayAddons.length; index++) {
-        const element = arrayAddons[index];
+    arrayOthers = JSON.parse(json)["other"];
+    for (let index = 0; index < arrayOthers.length; index++) {
+        const element = arrayOthers[index];
         var settingsFieldContainer = document.createElement("div");
         settingsFieldContainer.setAttribute("class", "settingsFieldContainer");
         var settingsFieldTitle = document.createElement("span");
@@ -301,6 +302,15 @@ function updateOptional(){
                 document.getElementById("input_addon_" + element["name"]).setAttribute("checked", true);
             else
                 document.getElementById("input_addon_" + element["name"]).removeAttribute("checked");
+        });
+    }
+    for (let index = 0; index < arrayOthers.length; index++) {
+        const element = arrayOthers[index];
+        ipcRenderer.invoke('verify_file', element["destination"], element["file_match"]).then(function (results) {
+            if(results)
+                document.getElementById("input_other_" + element["name"]).setAttribute("checked", true);
+            else
+                document.getElementById("input_other_" + element["name"]).removeAttribute("checked");
         });
     }
 }
