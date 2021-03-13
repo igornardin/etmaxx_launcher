@@ -49,10 +49,6 @@ store.write();
  * Janela principal
  */
 function createWindow() {
-  if (process.platform !== 'win32') {
-    app.quit()
-    return
-  }
   directory = store.get('directory');
   patchbefore = store.get('patch');
   mainWindow = new BrowserWindow({

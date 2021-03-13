@@ -33,6 +33,16 @@ builder.build({
             allowElevation: true,
             allowToChangeInstallationDirectory: true
         },
+        mac: {
+            "category": "public.app-category.games",
+            "icon": "build/icon.icns",
+            "target": [
+                "dmg"
+            ],
+            "electronLanguages": [
+                "en"
+            ]
+        },
         compression: 'maximum',
         files: [
             '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}'
